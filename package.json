@@ -1,0 +1,35 @@
+{
+  "name": "moran-kal-website",
+  "version": "1.0.0",
+  "description": "Official website for Moran Kal - Children's Standup Comedian",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [
+    "standup",
+    "children",
+    "comedy",
+    "hebrew",
+    "rtl"
+  ],
+  "author": "Moran Kal",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^20.18.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/styled-components": "^5.1.0",
+    "framer-motion": "^10.0.0",
+    "next": "^14.0.0",
+    "next-i18next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.10.0",
+    "react-lightbox-component": "^1.2.0",
+    "styled-components": "^6.0.0",
+    "typescript": "^5.0.0"
+  }
+}

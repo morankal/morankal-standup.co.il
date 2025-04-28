@@ -1,0 +1,15 @@
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/[city]": "pages/[city].js",
+  "/he/404": "pages/he/404.html",
+  "/he/500": "pages/he/500.html",
+  "/he/contact": "pages/he/contact.html",
+  "/he/gallery": "pages/he/gallery.html",
+  "/he": "pages/he.html",
+  "/he/about": "pages/he/about.html",
+  "/he/testimonials": "pages/he/testimonials.html",
+  "/he/videos": "pages/he/videos.html",
+  "/he/performances": "pages/he/performances.html"
+}
