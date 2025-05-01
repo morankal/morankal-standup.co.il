@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FaPlay } from 'react-icons/fa';
+import VideoModal from './VideoModal';
+
 
 interface VideoGalleryProps {
   videos: {
@@ -131,9 +133,11 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
   }, [activeCategory, videos]);
   
   const handleVideoClick = (videoId: string) => {
+    
+    console.log("Video clicked:", video.title);
     setIsModalOpen(true); 
 
-    
+
     //setSelectedVideo(videoId);
     // In a real implementation, this would open a modal with the embedded video
   };
@@ -184,7 +188,8 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
         ))}
       </Grid>
       
-      {/* Video modal implementation would go here */}
+      {isModalOpen && <VideoModal videoUrl={video.videoUrl} onClose={closeModal} />}
+
     </GalleryContainer>
   );
 };
