@@ -115,7 +115,7 @@ const VideoTitle = styled.h3`
 const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [filteredVideos, setFilteredVideos] = useState(videos);
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
+  const [ , setSelectedVideo] = useState<string | null>(null);
   
   useEffect(() => {
     if (activeCategory === 'all') {
@@ -126,6 +126,7 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
   }, [activeCategory, videos]);
   
   const handleVideoClick = (videoId: string) => {
+    console.log(videoId)
     setSelectedVideo(videoId);
     // In a real implementation, this would open a modal with the embedded video
   };
