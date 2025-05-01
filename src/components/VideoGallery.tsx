@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FaPlay } from 'react-icons/fa';
-import VideoModal from './VideoModal';
-
 
 interface VideoGalleryProps {
   videos: {
@@ -118,11 +116,6 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
   const [activeCategory, setActiveCategory] = useState('all');
   const [filteredVideos, setFilteredVideos] = useState(videos);
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
   
   useEffect(() => {
     if (activeCategory === 'all') {
@@ -133,11 +126,7 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
   }, [activeCategory, videos]);
   
   const handleVideoClick = (videoId: string) => {
-    
-    console.log("Video clicked: " + videoId);
-    setIsModalOpen(true); 
-
-    // setSelectedVideo(videoId);
+    setSelectedVideo(videoId);
     // In a real implementation, this would open a modal with the embedded video
   };
   
@@ -186,11 +175,8 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
           </VideoItem>
         ))}
       </Grid>
-
-      <VideoModal videoUrl={`https://www.youtube.com/embed/edBVZ2iDrVI`} onClose={closeModal} />      
-
-      {isModalOpen && <VideoModal videoUrl={`https://www.youtube.com/embed/${video.id}`} onClose={closeModal} />}
-
+      
+      {/* Video modal implementation would go here */}
     </GalleryContainer>
   );
 };
