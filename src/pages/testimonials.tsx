@@ -146,7 +146,7 @@ const WhatsAppItem = styled(motion.div)`
 
 export default function Testimonials() {
   const [currentPage, setCurrentPage] = useState(1);
-  const testimonialsPerPage = 10;
+  const testimonialsPerPage = 200;
   
   // This would be dynamically generated from your testimonials data
   const testimonials = [
