@@ -134,11 +134,10 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
   
   const handleVideoClick = (videoId: string) => {
     
-    console.log("Video clicked:", video.title);
+    console.log("Video clicked: ", videoId);
     setIsModalOpen(true); 
 
-
-    //setSelectedVideo(videoId);
+    setSelectedVideo(videoId);
     // In a real implementation, this would open a modal with the embedded video
   };
   
@@ -188,7 +187,7 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
         ))}
       </Grid>
       
-      {isModalOpen && <VideoModal videoUrl={video.videoUrl} onClose={closeModal} />}
+      {isModalOpen && <VideoModal videoUrl={video.id} onClose={closeModal} />}
 
     </GalleryContainer>
   );
