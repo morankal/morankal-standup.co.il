@@ -187,8 +187,8 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
         ))}
       </Grid>
 
-      <VideoModal videoUrl={`https://www.youtube.com/embed/${video.id}`} onClose={closeModal} />      
-      
+      <VideoModal videoUrl={`https://www.youtube.com/embed/edBVZ2iDrVI`} onClose={closeModal} />      
+
       {isModalOpen && <VideoModal videoUrl={`https://www.youtube.com/embed/${video.id}`} onClose={closeModal} />}
 
     </GalleryContainer>
