@@ -49,7 +49,7 @@ export default function Videos() {
       category: 'הצחוקייה'
     },
     {
-      id: 'ZZ5LpwO-An4', // Placeholder - replace with actual video ID
+      id: 'edBVZ2iDrVI', // Placeholder - replace with actual video ID
       title: 'מופע יום הולדת - מורן קל סטנדאפיסט לילדים',
       category: 'ימי הולדת'
     },
