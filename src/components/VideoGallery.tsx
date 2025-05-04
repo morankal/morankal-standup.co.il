@@ -4,6 +4,9 @@ import { motion } from 'framer-motion';
 import { FaPlay } from 'react-icons/fa';
 import VideoModal from './VideoModal'; // Import the modal component
 
+// Ensure this component runs on the client
+// If using Next.js App Router, add 'use client'; at the top
+
 interface Video {
   id: string;
   title: string;
@@ -121,7 +124,9 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
   const [filteredVideos, setFilteredVideos] = useState(videos);
   const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null); // State for modal
 
+  // Filter videos when category or videos prop changes
   useEffect(() => {
+    console.log('VideoGallery: useEffect triggered. Active category:', activeCategory);
     if (activeCategory === 'all') {
       setFilteredVideos(videos);
     } else {
@@ -129,15 +134,22 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
     }
   }, [activeCategory, videos]);
 
+  // Handle clicking on a video item
   const handleVideoClick = (video: Video) => {
+    console.log('VideoGallery: handleVideoClick called for video:', video.id, video.title);
     // Construct YouTube embed URL from video ID
-    const embedUrl = `https://www.youtube.com/embed/${video.id}`;
+    const embedUrl = `https://www.youtube.com/embed/${video.id}?autoplay=1`; // Added autoplay
+    console.log('VideoGallery: Setting selectedVideoUrl to:', embedUrl);
     setSelectedVideoUrl(embedUrl);
   };
 
+  // Handle closing the modal
   const closeModal = () => {
+    console.log('VideoGallery: closeModal called.');
     setSelectedVideoUrl(null);
   };
+
+  console.log('VideoGallery: Rendering. Selected video URL:', selectedVideoUrl);
 
   return (
     <GalleryContainer>
@@ -169,12 +181,21 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.05 }}
-            onClick={() => handleVideoClick(video)} // Pass the whole video object
+            onClick={() => handleVideoClick(video)} // Ensure onClick is correctly assigned
+            aria-label={`Play video: ${video.title}`}
+            role="button"
+            tabIndex={0} // Make it focusable
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                handleVideoClick(video);
+              }
+            }} // Add keyboard accessibility
           >
             <ThumbnailContainer>
               <Thumbnail
                 src={video.thumbnail || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
                 alt={video.title}
+                loading="lazy" // Add lazy loading for thumbnails
               />
               <PlayButton className="play-button">
                 <FaPlay />
