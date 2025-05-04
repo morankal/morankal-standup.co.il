@@ -21,9 +21,16 @@ interface Testimonial {
   year: string | null;
 }
 
+// Define the interface for the props expected by TestimonialCarousel
+interface CarouselTestimonial {
+  name: string;
+  text: string;
+  event?: string;
+}
+
 // Define the props for the page component
 interface HomePageProps {
-  testimonials: Testimonial[];
+  carouselTestimonials: CarouselTestimonial[]; // Use the mapped type
 }
 
 const HomeContainer = styled.div`
@@ -121,23 +128,31 @@ const CTAButton = styled(motion.a)`
 // Fetch testimonials at build time
 export async function getStaticProps() {
   const filePath = path.join(process.cwd(), 'public', 'data', 'testimonials.json');
-  let testimonials: Testimonial[] = [];
+  let carouselTestimonials: CarouselTestimonial[] = [];
   try {
     const jsonData = await fs.readFile(filePath, 'utf-8');
     const allTestimonials: Testimonial[] = JSON.parse(jsonData);
     // Select a few testimonials for the carousel (e.g., first 5)
-    testimonials = allTestimonials.slice(0, 5);
+    const selectedTestimonials = allTestimonials.slice(0, 5);
+
+    // Map the data to the structure expected by TestimonialCarousel
+    carouselTestimonials = selectedTestimonials.map(t => ({
+      name: t.author || 'Anonymous', // Use author as name, provide fallback
+      text: t.text,
+      event: t.event_type || undefined // Use event_type as event
+    }));
+
   } catch (error) {
     console.error('Error reading testimonials file for homepage:', error);
     // Use fallback or empty array if file read fails
-    testimonials = [];
+    carouselTestimonials = [];
   }
   return {
-    props: { testimonials },
+    props: { carouselTestimonials }, // Return the mapped data
   };
 }
 
-export default function Home({ testimonials }: HomePageProps) {
+export default function Home({ carouselTestimonials }: HomePageProps) {
 
   return (
     <StageBackground>
@@ -234,8 +249,8 @@ export default function Home({ testimonials }: HomePageProps) {
               מה אומרים עלי
             </SectionTitle>
 
-            {/* Use testimonials loaded from JSON */}
-            <TestimonialCarousel testimonials={testimonials} />
+            {/* Pass the correctly mapped testimonials to the carousel */}
+            <TestimonialCarousel testimonials={carouselTestimonials} />
 
             <CTASection>
               <CTAButton
