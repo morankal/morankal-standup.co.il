@@ -19,8 +19,8 @@
   "license": "ISC",
   "dependencies": {
     "@types/node": "",
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
+    "@types/react": "",
+    "@types/react-dom": "",
     "@types/styled-components": "^5.1.0",
     "framer-motion": "^10.0.0",
     "next": "^14.0.0",
