@@ -2,14 +2,17 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FaPlay } from 'react-icons/fa';
+import VideoModal from './VideoModal'; // Import the modal component
+
+interface Video {
+  id: string;
+  title: string;
+  thumbnail?: string;
+  category?: string;
+}
 
 interface VideoGalleryProps {
-  videos: {
-    id: string;
-    title: string;
-    thumbnail?: string;
-    category?: string;
-  }[];
+  videos: Video[];
   categories?: string[];
 }
 
@@ -33,7 +36,7 @@ const FilterButton = styled.button<{ active: boolean }>`
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.3s ease;
-  
+
   &:hover {
     background-color: ${({ active }) => active ? 'var(--primary-red)' : 'rgba(0, 0, 0, 0.8)'};
   }
@@ -43,7 +46,7 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
-  
+
   @media (max-width: 768px) {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   }
@@ -55,7 +58,7 @@ const VideoItem = styled(motion.div)`
   overflow: hidden;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  
+
   &:hover {
     .play-button {
       transform: translate(-50%, -50%) scale(1.1);
@@ -95,7 +98,8 @@ const PlayButton = styled.div`
   color: white;
   font-size: 1.5rem;
   transition: all 0.3s ease;
-  
+  pointer-events: none; // Prevent button from interfering with VideoItem click
+
   @media (max-width: 768px) {
     width: 50px;
     height: 50px;
@@ -115,8 +119,8 @@ const VideoTitle = styled.h3`
 const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [filteredVideos, setFilteredVideos] = useState(videos);
-  const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-  
+  const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null); // State for modal
+
   useEffect(() => {
     if (activeCategory === 'all') {
       setFilteredVideos(videos);
@@ -124,27 +128,32 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
       setFilteredVideos(videos.filter(video => video.category === activeCategory));
     }
   }, [activeCategory, videos]);
-  
-  const handleVideoClick = (videoId: string) => {
-    setSelectedVideo(videoId);
-    // In a real implementation, this would open a modal with the embedded video
+
+  const handleVideoClick = (video: Video) => {
+    // Construct YouTube embed URL from video ID
+    const embedUrl = `https://www.youtube.com/embed/${video.id}`;
+    setSelectedVideoUrl(embedUrl);
   };
-  
+
+  const closeModal = () => {
+    setSelectedVideoUrl(null);
+  };
+
   return (
     <GalleryContainer>
       {categories.length > 0 && (
         <FilterContainer>
-          <FilterButton 
-            active={activeCategory === 'all'} 
+          <FilterButton
+            active={activeCategory === 'all'}
             onClick={() => setActiveCategory('all')}
           >
             הכל
           </FilterButton>
-          
+
           {categories.map(category => (
-            <FilterButton 
-              key={category} 
-              active={activeCategory === category} 
+            <FilterButton
+              key={category}
+              active={activeCategory === category}
               onClick={() => setActiveCategory(category)}
             >
               {category}
@@ -152,20 +161,20 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
           ))}
         </FilterContainer>
       )}
-      
+
       <Grid>
         {filteredVideos.map((video, index) => (
-          <VideoItem 
+          <VideoItem
             key={video.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.05 }}
-            onClick={() => handleVideoClick(video.id)}
+            onClick={() => handleVideoClick(video)} // Pass the whole video object
           >
             <ThumbnailContainer>
-              <Thumbnail 
-                src={video.thumbnail || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`} 
-                alt={video.title} 
+              <Thumbnail
+                src={video.thumbnail || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
+                alt={video.title}
               />
               <PlayButton className="play-button">
                 <FaPlay />
@@ -175,10 +184,14 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) 
           </VideoItem>
         ))}
       </Grid>
-      
-      {/* Video modal implementation would go here */}
+
+      {/* Conditionally render the modal */}
+      {selectedVideoUrl && (
+        <VideoModal videoUrl={selectedVideoUrl} onClose={closeModal} />
+      )}
     </GalleryContainer>
   );
 };
 
 export default VideoGallery;
+
