@@ -2,48 +2,27 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FaPlay } from 'react-icons/fa';
-import VideoModal from './VideoModal'; // Import the modal component
-
-// Ensure this component runs on the client
-// If using Next.js App Router, add 'use client'; at the top
+import VideoModal from './VideoModal';
 
 interface Video {
   id: string;
-  title: string;
+  // title: string; // Title removed as per requirement
   thumbnail?: string;
-  category?: string;
+  // category?: string; // Category removed as per requirement
 }
 
 interface VideoGalleryProps {
   videos: Video[];
-  categories?: string[];
+  // categories?: string[]; // Categories removed as per requirement
 }
 
 const GalleryContainer = styled.div`
   padding: 2rem 0;
 `;
 
-const FilterContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-bottom: 2rem;
-  gap: 0.5rem;
-`;
-
-const FilterButton = styled.button<{ active: boolean }>`
-  padding: 0.5rem 1rem;
-  background-color: ${({ active }) => active ? 'var(--primary-red)' : 'var(--primary-black)'};
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: ${({ active }) => active ? 'var(--primary-red)' : 'rgba(0, 0, 0, 0.8)'};
-  }
-`;
+// FilterContainer is removed as categories are removed
+// const FilterContainer = styled.div` ... `;
+// const FilterButton = styled.button<{ active: boolean }>` ... `;
 
 const Grid = styled.div`
   display: grid;
@@ -101,7 +80,7 @@ const PlayButton = styled.div`
   color: white;
   font-size: 1.5rem;
   transition: all 0.3s ease;
-  pointer-events: none; // Prevent button from interfering with VideoItem click
+  pointer-events: none;
 
   @media (max-width: 768px) {
     width: 50px;
@@ -110,103 +89,63 @@ const PlayButton = styled.div`
   }
 `;
 
-const VideoTitle = styled.h3`
-  padding: 1rem;
-  background-color: var(--primary-black);
-  color: white;
-  font-size: 1rem;
-  text-align: center;
-  margin: 0;
-`;
+// VideoTitle is removed as per requirement
+// const VideoTitle = styled.h3` ... `;
 
-const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) => {
-  const [activeCategory, setActiveCategory] = useState('all');
-  const [filteredVideos, setFilteredVideos] = useState(videos);
-  const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null); // State for modal
+const VideoGallery: React.FC<VideoGalleryProps> = ({ videos }) => {
+  // activeCategory and filteredVideos state related to categories are removed
+  // const [activeCategory, setActiveCategory] = useState('all');
+  // const [filteredVideos, setFilteredVideos] = useState(videos);
+  const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null);
 
-  // Filter videos when category or videos prop changes
-  useEffect(() => {
-    console.log('VideoGallery: useEffect triggered. Active category:', activeCategory);
-    if (activeCategory === 'all') {
-      setFilteredVideos(videos);
-    } else {
-      setFilteredVideos(videos.filter(video => video.category === activeCategory));
-    }
-  }, [activeCategory, videos]);
+  // useEffect for filtering is removed as categories are removed
+  // useEffect(() => { ... }, [activeCategory, videos]);
 
-  // Handle clicking on a video item
   const handleVideoClick = (video: Video) => {
-    console.log('VideoGallery: handleVideoClick called for video:', video.id, video.title);
-    // Construct YouTube embed URL from video ID
-    const embedUrl = `https://www.youtube.com/embed/${video.id}?autoplay=1`; // Added autoplay
-    console.log('VideoGallery: Setting selectedVideoUrl to:', embedUrl);
+    const embedUrl = `https://www.youtube.com/embed/${video.id}?autoplay=1`;
     setSelectedVideoUrl(embedUrl);
   };
 
-  // Handle closing the modal
   const closeModal = () => {
-    console.log('VideoGallery: closeModal called.');
     setSelectedVideoUrl(null);
   };
 
-  console.log('VideoGallery: Rendering. Selected video URL:', selectedVideoUrl);
-
   return (
     <GalleryContainer>
-      {categories.length > 0 && (
-        <FilterContainer>
-          <FilterButton
-            active={activeCategory === 'all'}
-            onClick={() => setActiveCategory('all')}
-          >
-            הכל
-          </FilterButton>
-
-          {categories.map(category => (
-            <FilterButton
-              key={category}
-              active={activeCategory === category}
-              onClick={() => setActiveCategory(category)}
-            >
-              {category}
-            </FilterButton>
-          ))}
-        </FilterContainer>
-      )}
-
+      {/* FilterContainer is removed */}
       <Grid>
-        {filteredVideos.map((video, index) => (
+        {/* Directly map over videos prop, not filteredVideos */}
+        {videos.map((video, index) => (
           <VideoItem
             key={video.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.05 }}
-            onClick={() => handleVideoClick(video)} // Ensure onClick is correctly assigned
-            aria-label={`Play video: ${video.title}`}
+            onClick={() => handleVideoClick(video)}
+            aria-label={`Play video ${video.id}`}
             role="button"
-            tabIndex={0} // Make it focusable
+            tabIndex={0}
             onKeyPress={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 handleVideoClick(video);
               }
-            }} // Add keyboard accessibility
+            }}
           >
             <ThumbnailContainer>
               <Thumbnail
                 src={video.thumbnail || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
-                alt={video.title}
-                loading="lazy" // Add lazy loading for thumbnails
+                alt={`Video thumbnail for ${video.id}`}
+                loading="lazy"
               />
               <PlayButton className="play-button">
                 <FaPlay />
               </PlayButton>
             </ThumbnailContainer>
-            <VideoTitle>{video.title}</VideoTitle>
+            {/* VideoTitle component is removed */}
           </VideoItem>
         ))}
       </Grid>
 
-      {/* Conditionally render the modal */}
       {selectedVideoUrl && (
         <VideoModal videoUrl={selectedVideoUrl} onClose={closeModal} />
       )}

@@ -31,47 +31,52 @@ const Container = styled.div`
 `;
 
 export default function Videos() {
-  // This would be dynamically generated from your video data
   const videos = [
+    // Kept videos (originally had titles and categories, now only ID)
+    {
+      id: 'hxm_QYDPgBQ', 
+    },
     {
       id: 'cF4jdl9Ogio',
-      title: 'שואוריל - מורן קל סטנדאפיסט לילדים',
-      category: 'שואוריל'
+    },
+    // New videos (only ID)
+    {
+      id: 'GxhpMPJ8tIo',
     },
     {
-      id: 'hxm_QYDPgBQ',
-      title: 'הופעה מלאה - מורן קל סטנדאפיסט לילדים',
-      category: 'הופעות מלאות'
+      id: 'edBVZ2iDrVI',
     },
     {
-      id: 'dQw4w9WgXcQ', // Placeholder - replace with actual video ID
-      title: 'קטע מתוך "הצחוקייה" - מורן קל',
-      category: 'הצחוקייה'
+      id: 'Me8d7ZJFtxI',
     },
     {
-      id: 'ZZ5LpwO-An4', // Placeholder - replace with actual video ID
-      title: 'מופע יום הולדת - מורן קל סטנדאפיסט לילדים',
-      category: 'ימי הולדת'
+      id: '35tZGHJuH54',
     },
     {
-      id: '9bZkp7q19f0', // Placeholder - replace with actual video ID
-      title: 'מופע בר מצווה - מורן קל סטנדאפיסט לילדים',
-      category: 'בר/בת מצווה'
+      id: 'FGwoUoczfBY',
     },
     {
-      id: 'jNQXAC9IVRw', // Placeholder - replace with actual video ID
-      title: 'מופע בבית ספר - מורן קל סטנדאפיסט לילדים',
-      category: 'בתי ספר'
+      id: 'w6yQD0Do5GI',
+    },
+    {
+      id: 'xyXtY4mcK3M',
+    },
+    {
+      id: 'u-g7exJnH8I',
+    },
+    {
+      id: 'F04v6ScC_lo',
     }
   ];
 
-  const categories = ['שואוריל', 'הופעות מלאות', 'הצחוקייה', 'ימי הולדת', 'בר/בת מצווה', 'בתי ספר'];
+  // Categories are no longer needed as titles/categories are removed
+  const categories = []; 
 
   return (
     <StageBackground>
       <Head>
         <title>גלריית וידאו | מורן קל - סטנדאפיסט לילדים</title>
-        <meta name="description" content="צפו בקטעי וידאו מהופעות של מורן קל, סטנדאפיסט לילדים. שואוריל, הופעות מלאות, קטעים מהטלוויזיה ועוד." />
+        <meta name="description" content="צפו בקטעי וידאו מהופעות של מורן קל, סטנדאפיסט לילדים." />
         <meta name="keywords" content="וידאו סטנדאפ לילדים, קטעי וידאו מורן קל, שואוריל סטנדאפיסט לילדים, הופעות סטנדאפ לילדים" />
         <link rel="canonical" href="https://www.morankal.co.il/videos" />
       </Head>
@@ -89,6 +94,7 @@ export default function Videos() {
               גלריית וידאו
             </SectionTitle>
             
+            {/* Pass only videos; categories prop might need to be removed from VideoGallery component or handled if it expects it */}
             <VideoGallery videos={videos} categories={categories} />
           </Container>
         </Section>
@@ -98,3 +104,4 @@ export default function Videos() {
     </StageBackground>
   );
 }
+

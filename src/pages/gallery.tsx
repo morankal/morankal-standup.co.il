@@ -12,13 +12,13 @@ import path from 'path';
 interface GalleryImage {
   src: string;
   alt: string;
-  category?: string; // Optional category for filtering
+  // Category is removed as per new requirement for a single gallery
 }
 
 // Define the props for the page component
 interface GalleryPageProps {
   galleryImages: GalleryImage[];
-  categories: string[];
+  // Categories are removed
 }
 
 const PageContainer = styled.div`
@@ -47,83 +47,44 @@ const Container = styled.div`
 
 // Function to generate alt text (can be improved)
 const generateAltText = (filename: string): string => {
-  // Basic alt text generation, replace underscores/hyphens with spaces
   const nameWithoutExt = filename.split('.').slice(0, -1).join('.');
   const readableName = nameWithoutExt.replace(/[-_]/g, ' ');
-  // Add context
   return `תמונה מהופעה של מורן קל - ${readableName}`;
 };
 
 // Fetch images at build time
 export async function getStaticProps() {
-  const performancesDir = path.join(process.cwd(), 'public', 'images', 'performances');
-  const whatsappDir = path.join(process.cwd(), 'public', 'images', 'whatsapp-testimonials');
+  const galleryDir = path.join(process.cwd(), 'public', 'images', 'gallery_new');
   let allImages: GalleryImage[] = [];
-  const categoriesSet = new Set<string>();
 
   try {
-    // Read WhatsApp testimonial images first
-    const whatsappFiles = fs.readdirSync(whatsappDir);
-    const whatsappImages = whatsappFiles
-      .filter(file => /\\.jpg|jpeg|png|gif|webp$/i.test(file)) // Basic image filter
+    const imageFiles = fs.readdirSync(galleryDir);
+    allImages = imageFiles
+      .filter(file => /\.(jpg|jpeg|png|gif|webp)$/i.test(file)) // Basic image filter
       .map(file => ({
-        src: `/images/whatsapp-testimonials/${file}`,
-        alt: `המלצת וואטסאפ - ${file}`, // Specific alt text for WhatsApp images
-        category: 'המלצות וואטסאפ' // Assign a specific category
+        src: `/images/gallery_new/${file}`,
+        alt: generateAltText(file),
       }));
-    allImages = allImages.concat(whatsappImages);
-    if (whatsappImages.length > 0) {
-        categoriesSet.add('המלצות וואטסאפ');
-    }
-
-    // Read performance images
-    const performanceFiles = fs.readdirSync(performancesDir);
-    const performanceImages = performanceFiles
-      .filter(file => /\[.jpg|jpeg|png|gif|webp]$/i.test(file)) // Basic image filter
-      .map(file => {
-          // Basic category assignment based on filename (example)
-          let category = 'הופעות'; // Default category
-          if (file.toLowerCase().includes('birthday') || file.toLowerCase().includes('יום הולדת')) category = 'ימי הולדת';
-          if (file.toLowerCase().includes('mitzva') || file.toLowerCase().includes('מצווה')) category = 'בר/בת מצווה';
-          if (file.toLowerCase().includes('school') || file.toLowerCase().includes('בית ספר')) category = 'בתי ספר';
-          if (file.toLowerCase().includes('camp') || file.toLowerCase().includes('קייטנה')) category = 'קייטנות';
-          categoriesSet.add(category);
-          return {
-              src: `/images/performances/${file}`,
-              alt: generateAltText(file),
-              category: category
-          };
-      });
-    allImages = allImages.concat(performanceImages);
-
   } catch (error) {
-    console.error('Error reading gallery images:', error);
-    // Return empty array or default images in case of error
-    allImages = [];
-  }
-
-  const categories = Array.from(categoriesSet);
-  // Ensure 'המלצות וואטסאפ' is first if it exists
-  if (categories.includes('המלצות וואטסאפ')) {
-      categories.sort((a, b) => a === 'המלצות וואטסאפ' ? -1 : b === 'המלצות וואטסאפ' ? 1 : 0);
+    console.error('Error reading gallery images from gallery_new:', error);
+    allImages = []; // Return empty array or default images in case of error
   }
 
   return {
     props: {
       galleryImages: allImages,
-      categories: categories,
+      // Categories are no longer passed
     },
   };
 }
 
-export default function Gallery({ galleryImages, categories }: GalleryPageProps) {
-
+export default function Gallery({ galleryImages }: GalleryPageProps) {
   return (
     <StageBackground>
       <Head>
         <title>גלריית תמונות | מורן קל - סטנדאפיסט לילדים</title>
-        <meta name="description" content="גלריית תמונות מהופעות של מורן קל, סטנדאפיסט לילדים. צפו בתמונות מימי הולדת, בר/בת מצווה, אירועים בבתי ספר וקייטנות." />
-        <meta name="keywords" content="גלריית תמונות, סטנדאפיסט לילדים, מורן קל, תמונות מופעים, תמונות ימי הולדת, תמונות בר מצווה" />
+        <meta name="description" content="גלריית תמונות מהופעות של מורן קל, סטנדאפיסט לילדים." />
+        <meta name="keywords" content="גלריית תמונות, סטנדאפיסט לילדים, מורן קל, תמונות מופעים" />
         <link rel="canonical" href="https://www.morankal.co.il/gallery" />
       </Head>
 
@@ -140,8 +101,9 @@ export default function Gallery({ galleryImages, categories }: GalleryPageProps)
               גלריית תמונות
             </SectionTitle>
 
-            {/* Pass the dynamically loaded images and categories to the grid */}
-            <GalleryGrid images={galleryImages} categories={categories} />
+            {/* Pass only the dynamically loaded images to the grid */}
+            {/* The GalleryGrid component might need adjustment if it still expects a categories prop */}
+            <GalleryGrid images={galleryImages} />
           </Container>
         </Section>
 
