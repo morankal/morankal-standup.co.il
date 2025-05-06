@@ -32,45 +32,76 @@ const Container = styled.div`
 
 export default function Videos() {
   const videos = [
-    // Kept videos (originally had titles and categories, now only ID)
+    // Kept videos with original titles and categories
     {
-      id: 'hxm_QYDPgBQ', 
+      id: 'hxm_QYDPgBQ',
+      title: 'הופעה מלאה - מורן קל סטנדאפיסט לילדים',
+      category: 'הופעות מלאות'
     },
     {
       id: 'cF4jdl9Ogio',
+      title: 'שואוריל - מורן קל סטנדאפיסט לילדים',
+      category: 'שואוריל'
     },
-    // New videos (only ID)
+    // New videos with generic titles and a new category
     {
       id: 'GxhpMPJ8tIo',
+      title: 'סרטון מורן קל',
+      category: 'סרטונים חדשים'
     },
     {
       id: 'edBVZ2iDrVI',
+      title: 'סרטון מורן קל',
+      category: 'סרטונים חדשים'
     },
     {
       id: 'Me8d7ZJFtxI',
+      title: 'סרטון מורן קל',
+      category: 'סרטונים חדשים'
     },
     {
       id: '35tZGHJuH54',
+      title: 'סרטון מורן קל',
+      category: 'סרטונים חדשים'
     },
     {
       id: 'FGwoUoczfBY',
+      title: 'סרטון מורן קל',
+      category: 'סרטונים חדשים'
     },
     {
       id: 'w6yQD0Do5GI',
+      title: 'סרטון מורן קל',
+      category: 'סרטונים חדשים'
     },
     {
       id: 'xyXtY4mcK3M',
+      title: 'סרטון מורן קל',
+      category: 'סרטונים חדשים'
     },
     {
       id: 'u-g7exJnH8I',
+      title: 'סרטון מורן קל',
+      category: 'סרטונים חדשים'
     },
     {
       id: 'F04v6ScC_lo',
+      title: 'סרטון מורן קל',
+      category: 'סרטונים חדשים'
     }
   ];
 
-  // Categories are no longer needed as titles/categories are removed
-  const categories = []; 
+  // Define categories based on the videos array
+  const categories = Array.from(new Set(videos.map(video => video.category)));
+  // Ensure specific order if needed, e.g., 'שואוריל' first, then 'הופעות מלאות', then 'סרטונים חדשים'
+  categories.sort((a, b) => {
+    if (a === 'שואוריל') return -1;
+    if (b === 'שואוריל') return 1;
+    if (a === 'הופעות מלאות') return -1;
+    if (b === 'הופעות מלאות') return 1;
+    return a.localeCompare(b);
+  });
+
 
   return (
     <StageBackground>
@@ -94,7 +125,6 @@ export default function Videos() {
               גלריית וידאו
             </SectionTitle>
             
-            {/* Pass only videos; categories prop might need to be removed from VideoGallery component or handled if it expects it */}
             <VideoGallery videos={videos} categories={categories} />
           </Container>
         </Section>

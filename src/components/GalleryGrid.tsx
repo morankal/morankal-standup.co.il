@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Added useEffect
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
+interface GalleryImageItem { // Renamed to avoid conflict with HTMLImageElement
+  src: string;
+  alt: string;
+  category?: string; // Keep category optional for flexibility, though not used in current main gallery
+}
+
 interface GalleryGridProps {
-  images: {
-    src: string;
-    alt: string;
-    category?: string;
-  }[];
-  categories?: string[];
+  images: GalleryImageItem[];
+  categories?: string[]; // Categories prop is now optional
 }
 
 const GalleryContainer = styled.div`
@@ -98,14 +100,19 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({ images, categories = [] }) =>
   const [activeCategory, setActiveCategory] = useState('all');
   const [filteredImages, setFilteredImages] = useState(images);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // Update filteredImages when images prop changes or if categories are used
+  useEffect(() => {
+    if (!categories || categories.length === 0 || activeCategory === 'all') {
+      setFilteredImages(images);
+    } else {
+      setFilteredImages(images.filter(image => image.category === activeCategory));
+    }
+  }, [images, categories, activeCategory]);
   
   const handleCategoryChange = (category: string) => {
     setActiveCategory(category);
-    if (category === 'all') {
-      setFilteredImages(images);
-    } else {
-      setFilteredImages(images.filter(image => image.category === category));
-    }
+    // Filtering logic is now primarily in useEffect
   };
   
   const openLightbox = (src: string) => {
@@ -118,7 +125,8 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({ images, categories = [] }) =>
   
   return (
     <GalleryContainer>
-      {categories.length > 0 && (
+      {/* Only show filter buttons if categories are provided and there's more than one category or 'all' is not the only option implicitly */}
+      {categories && categories.length > 0 && (
         <FilterContainer>
           <FilterButton 
             active={activeCategory === 'all'} 
@@ -142,23 +150,24 @@ const GalleryGrid: React.FC<GalleryGridProps> = ({ images, categories = [] }) =>
       <Grid>
         {filteredImages.map((image, index) => (
           <ImageItem 
-            key={index}
+            key={image.src + index} // Use a more unique key if possible, e.g., image.id if available
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.05 }}
             onClick={() => openLightbox(image.src)}
           >
-            <Image src={image.src} alt={image.alt} />
+            <Image src={image.src} alt={image.alt} loading="lazy" />
           </ImageItem>
         ))}
       </Grid>
       
-      <Lightbox visible={!!selectedImage} onClick={closeLightbox}>
-        <CloseButton onClick={closeLightbox}>×</CloseButton>
-        {selectedImage && <LightboxImage src={selectedImage} alt="תמונה מוגדלת" />}
+      <Lightbox visible={!!selectedImage} onClick={(e) => { e.stopPropagation(); closeLightbox(); }}>
+        <CloseButton onClick={(e) => { e.stopPropagation(); closeLightbox(); }}>×</CloseButton>
+        {selectedImage && <LightboxImage src={selectedImage} alt="תמונה מוגדלת" onClick={(e) => e.stopPropagation()} />}
       </Lightbox>
     </GalleryContainer>
   );
 };
 
 export default GalleryGrid;
+

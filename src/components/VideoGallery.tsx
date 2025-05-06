@@ -2,27 +2,45 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FaPlay } from 'react-icons/fa';
-import VideoModal from './VideoModal';
+import VideoModal from './VideoModal'; // Import the modal component
 
 interface Video {
   id: string;
-  // title: string; // Title removed as per requirement
+  title: string; // Title is now expected
   thumbnail?: string;
-  // category?: string; // Category removed as per requirement
+  category?: string; // Category is now expected
 }
 
 interface VideoGalleryProps {
   videos: Video[];
-  // categories?: string[]; // Categories removed as per requirement
+  categories?: string[]; // Categories are now expected
 }
 
 const GalleryContainer = styled.div`
   padding: 2rem 0;
 `;
 
-// FilterContainer is removed as categories are removed
-// const FilterContainer = styled.div` ... `;
-// const FilterButton = styled.button<{ active: boolean }>` ... `;
+const FilterContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 2rem;
+  gap: 0.5rem;
+`;
+
+const FilterButton = styled.button<{ active: boolean }>`
+  padding: 0.5rem 1rem;
+  background-color: ${({ active }) => active ? 'var(--primary-red)' : 'var(--primary-black)'};
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: ${({ active }) => active ? 'var(--primary-red)' : 'rgba(0, 0, 0, 0.8)'};
+  }
+`;
 
 const Grid = styled.div`
   display: grid;
@@ -89,17 +107,27 @@ const PlayButton = styled.div`
   }
 `;
 
-// VideoTitle is removed as per requirement
-// const VideoTitle = styled.h3` ... `;
+const VideoTitle = styled.h3`
+  padding: 1rem;
+  background-color: var(--primary-black);
+  color: white;
+  font-size: 1rem;
+  text-align: center;
+  margin: 0;
+`;
 
-const VideoGallery: React.FC<VideoGalleryProps> = ({ videos }) => {
-  // activeCategory and filteredVideos state related to categories are removed
-  // const [activeCategory, setActiveCategory] = useState('all');
-  // const [filteredVideos, setFilteredVideos] = useState(videos);
+const VideoGallery: React.FC<VideoGalleryProps> = ({ videos, categories = [] }) => {
+  const [activeCategory, setActiveCategory] = useState('all');
+  const [filteredVideos, setFilteredVideos] = useState(videos);
   const [selectedVideoUrl, setSelectedVideoUrl] = useState<string | null>(null);
 
-  // useEffect for filtering is removed as categories are removed
-  // useEffect(() => { ... }, [activeCategory, videos]);
+  useEffect(() => {
+    if (activeCategory === 'all') {
+      setFilteredVideos(videos);
+    } else {
+      setFilteredVideos(videos.filter(video => video.category === activeCategory));
+    }
+  }, [activeCategory, videos]);
 
   const handleVideoClick = (video: Video) => {
     const embedUrl = `https://www.youtube.com/embed/${video.id}?autoplay=1`;
@@ -112,17 +140,36 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos }) => {
 
   return (
     <GalleryContainer>
-      {/* FilterContainer is removed */}
+      {categories.length > 0 && (
+        <FilterContainer>
+          <FilterButton
+            active={activeCategory === 'all'}
+            onClick={() => setActiveCategory('all')}
+          >
+            הכל
+          </FilterButton>
+
+          {categories.map(category => (
+            <FilterButton
+              key={category}
+              active={activeCategory === category}
+              onClick={() => setActiveCategory(category)}
+            >
+              {category}
+            </FilterButton>
+          ))}
+        </FilterContainer>
+      )}
+
       <Grid>
-        {/* Directly map over videos prop, not filteredVideos */}
-        {videos.map((video, index) => (
+        {filteredVideos.map((video, index) => (
           <VideoItem
             key={video.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.05 }}
             onClick={() => handleVideoClick(video)}
-            aria-label={`Play video ${video.id}`}
+            aria-label={`Play video: ${video.title}`}
             role="button"
             tabIndex={0}
             onKeyPress={(e) => {
@@ -134,14 +181,14 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({ videos }) => {
             <ThumbnailContainer>
               <Thumbnail
                 src={video.thumbnail || `https://img.youtube.com/vi/${video.id}/hqdefault.jpg`}
-                alt={`Video thumbnail for ${video.id}`}
+                alt={video.title} // Use video.title for alt text
                 loading="lazy"
               />
               <PlayButton className="play-button">
                 <FaPlay />
               </PlayButton>
             </ThumbnailContainer>
-            {/* VideoTitle component is removed */}
+            <VideoTitle>{video.title}</VideoTitle> {/* VideoTitle is restored */}
           </VideoItem>
         ))}
       </Grid>
